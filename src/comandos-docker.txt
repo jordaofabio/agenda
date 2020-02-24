@@ -1,0 +1,6 @@
+docker pull postgres
+
+docker run --name database -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres
+
+## docker sem sudo
+sudo setfacl -m user:$USER:rw /var/run/docker.sock
