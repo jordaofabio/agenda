@@ -62,12 +62,17 @@ class AppointmentController {
   }
 
   async index(req, res) {
+    const { page = 1 } = req.query;
+
     const appointments = await Appointment.findAll({
       where: {
         user_id: req.userId,
         canceled_at: null,
       },
       order: ['date'],
+      attributes: ['id', 'date'],
+      limit: 2,
+      offset: (page - 1) * 2,
       include: [{ model: User, as: 'provider' }],
     });
 

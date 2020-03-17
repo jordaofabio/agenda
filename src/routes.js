@@ -7,6 +7,7 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import ProviderController from './app/controllers/ProviderController';
 import AppointmentController from './app/controllers/AppointmentController';
+import SheduleController from './app/controllers/SheduleController';
 
 const routes = new Router();
 const upload = multer(mulderConfig);
@@ -21,5 +22,7 @@ routes.get('/providers', ProviderController.index);
 
 routes.post('/appointments', AppointmentController.store);
 routes.get('/appointments', AppointmentController.index);
+
+routes.get('/shedule', SheduleController.index);
 
 export default routes;
