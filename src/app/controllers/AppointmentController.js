@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { startOfHour, parseISO, isBefore } from 'date-fns';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
 
@@ -29,6 +30,28 @@ class AppointmentController {
       });
     }
 
+    const hourStart = startOfHour(parseISO(date));
+
+    if (isBefore(hourStart, new Date())) {
+      return res.status(400).json({
+        error: 'Não é permito o uso de datas passadas.',
+      });
+    }
+
+    const checkAvailbility = await Appointment.findOne({
+      where: {
+        provider_id,
+        canceled_at: null,
+        date: hourStart,
+      },
+    });
+
+    if (checkAvailbility) {
+      return res.status(400).json({
+        error: 'O horário não está disponível.',
+      });
+    }
+
     const appointment = await Appointment.create({
       user_id: req.userId,
       provider_id,
@@ -36,6 +59,19 @@ class AppointmentController {
     });
 
     return res.json(appointment);
+  }
+
+  async index(req, res) {
+    const appointments = await Appointment.findAll({
+      where: {
+        user_id: req.userId,
+        canceled_at: null,
+      },
+      order: ['date'],
+      include: [{ model: User, as: 'provider' }],
+    });
+
+    return res.json(appointments);
   }
 }
 
