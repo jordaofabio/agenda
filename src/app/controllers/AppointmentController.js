@@ -50,6 +50,12 @@ class AppointmentController {
       });
     }
 
+    if (req.userId === provider_id) {
+      return res.status(401).json({
+        error: 'Você não pode criar um agendamento com você mesmo.',
+      });
+    }
+
     const hourStart = startOfHour(parseISO(date));
 
     if (isBefore(hourStart, new Date())) {
